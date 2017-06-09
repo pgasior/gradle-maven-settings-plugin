@@ -1,8 +1,26 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:2.0.0"
+    }
+}
+
 plugins {
+//    id 'com.github.johnrengelman.shadow' version '2.0.0'
+//    id 'com.github.johnrengelman.plugin-shadow' version '2.0.0'
     id 'groovy'
     id 'maven'
+
     id "com.gradle.plugin-publish" version "0.9.3"
+    id "maven-publish"
 }
+
+
+apply plugin: 'com.github.johnrengelman.plugin-shadow'
 
 ext {
     mavenVersion = '3.0.5'
@@ -13,8 +31,15 @@ repositories {
 }
 
 dependencies {
-    compile gradleApi()
-    compile localGroovy()
+    shadow gradleApi()
+    shadow localGroovy()
+    compile 'org.jdom:jdom2:2.0.5'
+    compile 'org.ow2.asm:asm:5.0.3'
+    compile 'org.ow2.asm:asm-commons:5.0.3'
+    compile 'commons-io:commons-io:2.4'
+    compile 'org.apache.ant:ant:1.9.4'
+    compile 'org.codehaus.plexus:plexus-utils:2.0.6'
+
     compile "org.apache.maven:maven-settings:$mavenVersion"
     compile "org.apache.maven:maven-settings-builder:$mavenVersion"
     compile "org.apache.maven:maven-model-builder:$mavenVersion"
@@ -26,8 +51,8 @@ dependencies {
     testCompile 'org.hamcrest:hamcrest-library:1.3'
 }
 
-sourceCompatibility = '1.6'
-targetCompatibility = '1.6'
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
 
 pluginBundle {
     website = 'https://github.com/mark-vieira/gradle-maven-settings-plugin'
@@ -37,13 +62,30 @@ pluginBundle {
 
     plugins {
         mavenSettings {
-            id = 'net.linguica.maven-settings'
+            id = 'net.linguica.maven-settings-custom'
             displayName = 'Maven Settings Plugin'
         }
     }
 
     mavenCoordinates {
         groupId = 'net.linguica.gradle'
-        artifactId = 'maven-settings-plugin'
+        artifactId = 'maven-settings-plugin-custom'
+    }
+}
+
+shadowJar {
+    classifier = ''
+}
+
+publishing {
+    publications {
+        plugin(MavenPublication) {
+            groupId 'net.linguica.gradle'
+            artifactId 'maven-settings-plugin-custom'
+
+            shadow.component(it)
+//            artifact sourcesJar
+//            from components.java
+        }
     }
 }

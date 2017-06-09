@@ -54,13 +54,13 @@ public class MavenSettingsPlugin implements Plugin<Project> {
         MavenSettingsPluginExtension extension =
                 project.extensions.create(MAVEN_SETTINGS_EXTENSION_NAME, MavenSettingsPluginExtension.class, project)
 
-        project.afterEvaluate {
+//        project.afterEvaluate {
             loadSettings(project, extension)
             activateProfiles(project, extension)
             registerMirrors(project)
             applyRepoCredentials(project.repositories)
             applyRepoCredentials(project.extensions.findByType(PublishingExtension)?.repositories)
-        }
+//        }
     }
 
     private void loadSettings(Project project, MavenSettingsPluginExtension extension) {
